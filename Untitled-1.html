@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPA - Cadastro de Filmes</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #ffffff;
+      color: #222;
+    }
+
+    header {
+      border-bottom: 1px solid #ddd;
+      background: #fff;
+    }
+
+    nav {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      gap: 10px;
+      padding: 16px 20px;
+      flex-wrap: wrap;
+    }
+
+    nav button {
+      border: 0;
+      background: transparent;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: 15px;
+      border-radius: 6px;
+    }
+
+    nav button:hover,
+    nav button.ativo {
+      background: #f0f0f0;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 30px;
+    }
+
+    p {
+      line-height: 1.6;
+    }
+
+    .acoes {
+      margin-top: 24px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .botao {
+      border: 1px solid #222;
+      background: #222;
+      color: white;
+      padding: 10px 16px;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    .botao.secundario {
+      background: white;
+      color: #222;
+    }
+
+    form {
+      max-width: 500px;
+    }
+
+    .campo {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #bbb;
+      border-radius: 6px;
+      font-size: 15px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background: #f7f7f7;
+    }
+
+    .excluir {
+      border: 1px solid #c33;
+      color: #c33;
+      background: white;
+      padding: 7px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .mensagem {
+      margin-top: 14px;
+      padding: 10px;
+      background: #f4f4f4;
+      border-radius: 6px;
+    }
+
+    .vazio {
+      margin-top: 20px;
+      padding: 20px;
+      border: 1px dashed #bbb;
+      border-radius: 6px;
+      color: #666;
+    }
+
+    .contador {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <button data-rota="inicio" class="ativo">Início</button>
+      <button data-rota="cadastro">Cadastrar Filmes</button>
+      <button data-rota="lista">Lista de Filmes</button>
+      <button data-rota="sobre">Sobre</button>
+    </nav>
+  </header>
+
+  <main id="app"></main>
+
+  <script>
+    // Os dados ficam apenas na memória.
+    // Se a página for atualizada, eles serão apagados.
+    const filmes = [];
+
+    const app = document.querySelector("#app");
+    const botoesMenu = document.querySelectorAll("nav button");
+
+    function marcarMenuAtivo(rota) {
+      botoesMenu.forEach(botao => {
+        botao.classList.toggle("ativo", botao.dataset.rota === rota);
+      });
+    }
+
+    function irPara(rota) {
+      marcarMenuAtivo(rota);
+
+      if (rota === "inicio") mostrarInicio();
+      if (rota === "cadastro") mostrarCadastro();
+      if (rota === "lista") mostrarLista();
+      if (rota === "sobre") mostrarSobre();
+    }
+
+    function mostrarInicio() {
+      app.innerHTML = `
+        <h1>Sistema de Cadastro de Filmes</h1>
+        <p>
+          Este é um exemplo simples de SPA feita com HTML, CSS e JavaScript.
+          A navegação acontece sem recarregar a página.
+        </p>
+
+        <p>
+          Os filmes cadastrados ficam temporariamente guardados em um array JavaScript.
+        </p>
+
+        <div class="contador">
+          Filmes cadastrados nesta sessão: <strong>${filmes.length}</strong>
+        </div>
+
+        <div class="acoes">
+          <button class="botao" id="btnCadastrar">Cadastrar filme</button>
+          <button class="botao secundario" id="btnVerFilmes">Ver filmes</button>
+        </div>
+      `;
+
+      document.querySelector("#btnCadastrar")
+        .addEventListener("click", () => irPara("cadastro"));
+
+      document.querySelector("#btnVerFilmes")
+        .addEventListener("click", () => irPara("lista"));
+    }
+
+    function mostrarCadastro() {
+      app.innerHTML = `
+        <h1>Cadastrar Filme</h1>
+
+        <form id="formFilme">
+          <div class="campo">
+            <label for="titulo">Título</label>
+            <input id="titulo" type="text" placeholder="Digite o título do filme" required />
+          </div>
+
+          <div class="campo">
+            <label for="nome">Nome</label>
+            <input id="genero" type="text" placeholder="Digite o Nome do filme" required />
+          </div>
+
+          <div class="campo">
+            <label for="nome">Nome</label>
+            <input id="ano" type="text" placeholder="Digite o ano do filme" required />
+          </div>
+
+          <button class="botao" type="submit">Salvar filme</button>
+          <div id="mensagem"></div>
+        </form>
+      `;
+
+      document.querySelector("#formFilme").addEventListener("submit", function(evento) {
+        evento.preventDefault();
+
+        const titulo = document.querySelector("#titulo").value.trim();
+        const genero = document.querySelector("#genero").value.trim();
+        const ano = document.querySelector("#ano").value.trim();
+
+        filmes.push({
+          nome,
+          genero,
+          lancamento
+        });
+
+        document.querySelector("#mensagem").innerHTML =
+          `<div class="mensagem">Filme cadastrado com sucesso.</div>`;
+
+        evento.target.reset();
+      });
+    }
+
+    function mostrarLista() {
+      app.innerHTML = `
+        <h1>Lista de Filmes</h1>
+        <p>Esta tabela é criada dinamicamente pelo JavaScript a partir do array de filmes.</p>
+        <div id="conteudoLista"></div>
+      `;
+
+      renderizarTabela();
+    }
+
+    function renderizarTabela() {
+      const conteudo = document.querySelector("#conteudoLista");
+
+      if (filmes.length === 0) {
+        conteudo.innerHTML = `
+          <div class="vazio">
+            Nenhum filme cadastrado ainda.
+          </div>
+        `;
+        return;
+      }
+
+      let linhas = "";
+
+      filmes.forEach((filme, indice) => {
+        linhas += `
+          <tr>
+            <td>${filme.Nome}</td>
+            <td>${filme.genero}</td>
+            <td>${filme.lancamento}</td>
+            <td>
+              <button class="excluir" data-indice="${indice}">Excluir</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      conteudo.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Gênero</th>
+              <th>Lançamento</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${linhas}
+          </tbody>
+        </table>
+      `;
+
+      document.querySelectorAll(".excluir").forEach(botao => {
+        botao.addEventListener("click", function() {
+          const indice = Number(this.dataset.indice);
+          filmes.splice(indice, 1);
+          renderizarTabela();
+        });
+      });
+    }
+
+    function mostrarSobre() {
+      app.innerHTML = `
+        <h1>Sobre o projeto</h1>
+        <p>
+          Este exemplo foi criado para demonstrar uma Single Page Application simples.
+        </p>
+        <p>
+          Existe apenas um arquivo HTML. Ao clicar nas opções do menu,
+          o JavaScript modifica o conteúdo do elemento <strong>#app</strong>.
+        </p>
+        <p>
+          O projeto também demonstra cadastro em array, manipulação do DOM,
+          eventos de clique, envio de formulário, listagem e exclusão.
+        </p>
+      `;
+    }
+
+    botoesMenu.forEach(botao => {
+      botao.addEventListener("click", () => {
+        irPara(botao.dataset.rota);
+      });
+    });
+
+    mostrarInicio();
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPA - Cadastro de Filmes</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #ffffff;
+      color: #222;
+    }
+
+    header {
+      border-bottom: 1px solid #ddd;
+      background: #fff;
+    }
+
+    nav {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      gap: 10px;
+      padding: 16px 20px;
+      flex-wrap: wrap;
+    }
+
+    nav button {
+      border: 0;
+      background: transparent;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: 15px;
+      border-radius: 6px;
+    }
+
+    nav button:hover,
+    nav button.ativo {
+      background: #f0f0f0;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 30px;
+    }
+
+    p {
+      line-height: 1.6;
+    }
+
+    .acoes {
+      margin-top: 24px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .botao {
+      border: 1px solid #222;
+      background: #222;
+      color: white;
+      padding: 10px 16px;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    .botao.secundario {
+      background: white;
+      color: #222;
+    }
+
+    form {
+      max-width: 500px;
+    }
+
+    .campo {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #bbb;
+      border-radius: 6px;
+      font-size: 15px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background: #f7f7f7;
+    }
+
+    .excluir {
+      border: 1px solid #c33;
+      color: #c33;
+      background: white;
+      padding: 7px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .mensagem {
+      margin-top: 14px;
+      padding: 10px;
+      background: #f4f4f4;
+      border-radius: 6px;
+    }
+
+    .vazio {
+      margin-top: 20px;
+      padding: 20px;
+      border: 1px dashed #bbb;
+      border-radius: 6px;
+      color: #666;
+    }
+
+    .contador {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <button data-rota="inicio" class="ativo">Início</button>
+      <button data-rota="cadastro">Cadastrar Filmes</button>
+      <button data-rota="lista">Lista de Filmes</button>
+      <button data-rota="sobre">Sobre</button>
+    </nav>
+  </header>
+
+  <main id="app"></main>
+
+  <script>
+    // Os dados ficam apenas na memória.
+    // Se a página for atualizada, eles serão apagados.
+    const filmes = [];
+
+    const app = document.querySelector("#app");
+    const botoesMenu = document.querySelectorAll("nav button");
+
+    function marcarMenuAtivo(rota) {
+      botoesMenu.forEach(botao => {
+        botao.classList.toggle("ativo", botao.dataset.rota === rota);
+      });
+    }
+
+    function irPara(rota) {
+      marcarMenuAtivo(rota);
+
+      if (rota === "inicio") mostrarInicio();
+      if (rota === "cadastro") mostrarCadastro();
+      if (rota === "lista") mostrarLista();
+      if (rota === "sobre") mostrarSobre();
+    }
+
+    function mostrarInicio() {
+      app.innerHTML = `
+        <h1>Sistema de Cadastro de Filmes</h1>
+        <p>
+          Este é um exemplo simples de SPA feita com HTML, CSS e JavaScript.
+          A navegação acontece sem recarregar a página.
+        </p>
+
+        <p>
+          Os filmes cadastrados ficam temporariamente guardados em um array JavaScript.
+        </p>
+
+        <div class="contador">
+          Filmes cadastrados nesta sessão: <strong>${filmes.length}</strong>
+        </div>
+
+        <div class="acoes">
+          <button class="botao" id="btnCadastrar">Cadastrar filme</button>
+          <button class="botao secundario" id="btnVerFilmes">Ver filmes</button>
+        </div>
+      `;
+
+      document.querySelector("#btnCadastrar")
+        .addEventListener("click", () => irPara("cadastro"));
+
+      document.querySelector("#btnVerFilmes")
+        .addEventListener("click", () => irPara("lista"));
+    }
+
+    function mostrarCadastro() {
+      app.innerHTML = `
+        <h1>Cadastrar Filme</h1>
+
+        <form id="formFilme">
+          <div class="campo">
+            <label for="nome">Nome</label>
+            <input id="nome" type="text" placeholder="Digite o nome do Filme" required />
+          </div>
+
+          <div class="campo">
+            <label for="genero">Gênero</label>
+            <input id="genero" type="text" placeholder="Digite o gênero do filme" required />
+          </div>
+
+          <div class="campo">
+            <label for="lancamento">Ano</label>
+            <input id="lancamento" type="text" placeholder="Digite o lançamento do filme" required />
+          </div>
+
+          <button class="botao" type="submit">Salvar filme</button>
+          <div id="mensagem"></div>
+        </form>
+      `;
+
+      document.querySelector("#formFilme").addEventListener("submit", function(evento) {
+        evento.preventDefault();
+
+        const titulo = document.querySelector("#titulo").value.trim();
+        const genero = document.querySelector("#genero").value.trim();
+        const ano = document.querySelector("#ano").value.trim();
+
+        filmes.push({
+          titulo,
+          genero,
+          ano
+        });
+
+        document.querySelector("#mensagem").innerHTML =
+          `<div class="mensagem">Filme cadastrado com sucesso.</div>`;
+
+        evento.target.reset();
+      });
+    }
+
+    function mostrarLista() {
+      app.innerHTML = `
+        <h1>Lista de Filmes</h1>
+        <p>Esta tabela é criada dinamicamente pelo JavaScript a partir do array de filmes.</p>
+        <div id="conteudoLista"></div>
+      `;
+
+      renderizarTabela();
+    }
+
+    function renderizarTabela() {
+      const conteudo = document.querySelector("#conteudoLista");
+
+      if (filmes.length === 0) {
+        conteudo.innerHTML = `
+          <div class="vazio">
+            Nenhum filme cadastrado ainda.
+          </div>
+        `;
+        return;
+      }
+
+      let linhas = "";
+
+      filmes.forEach((filme, indice) => {
+        linhas += `
+          <tr>
+            <td>${filme.titulo}</td>
+            <td>${filme.genero}</td>
+            <td>${filme.ano}</td>
+            <td>
+              <button class="excluir" data-indice="${indice}">Excluir</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      conteudo.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Gênero</th>
+              <th>Ano</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${linhas}
+          </tbody>
+        </table>
+      `;
+
+      document.querySelectorAll(".excluir").forEach(botao => {
+        botao.addEventListener("click", function() {
+          const indice = Number(this.dataset.indice);
+          filmes.splice(indice, 1);
+          renderizarTabela();
+        });
+      });
+    }
+
+    function mostrarSobre() {
+      app.innerHTML = `
+        <h1>Sobre o projeto</h1>
+        <p>
+          Este exemplo foi criado para demonstrar uma Single Page Application simples.
+        </p>
+        <p>
+          Existe apenas um arquivo HTML. Ao clicar nas opções do menu,
+          o JavaScript modifica o conteúdo do elemento <strong>#app</strong>.
+        </p>
+        <p>
+          O projeto também demonstra cadastro em array, manipulação do DOM,
+          eventos de clique, envio de formulário, listagem e exclusão.
+        </p>
+      `;
+    }
+
+    botoesMenu.forEach(botao => {
+      botao.addEventListener("click", () => {
+        irPara(botao.dataset.rota);
+      });
+    });
+
+    mostrarInicio();
+  </script>
+</body>
+</html>
