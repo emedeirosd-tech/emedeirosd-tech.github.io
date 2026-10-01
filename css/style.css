@@ -32,8 +32,9 @@ nav button {
 
 nav button:hover,
 nav button.ativo {
-  background: #e50914;
-  color:white;} 
+  background: #D4AF37;
+  color: #1a1a1a;
+}
 
 main {
   max-width: 900px;
