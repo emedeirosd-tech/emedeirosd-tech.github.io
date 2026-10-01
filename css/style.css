@@ -3,13 +3,13 @@
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
-  background: #ffffff;
-  color: #222;
+  background: #141414;
+  color: #f0f0f0;
 }
 
 header {
-  border-bottom: 1px solid #ddd;
-  background: #fff;
+  border-bottom: 1px solid #333;
+  background: #1f1f1f;
 }
 
 nav {
@@ -32,8 +32,8 @@ nav button {
 
 nav button:hover,
 nav button.ativo {
-  background: #f0f0f0;
-}
+  background: #e50914;
+  color:white;} 
 
 main {
   max-width: 900px;
@@ -44,10 +44,12 @@ main {
 h1 {
   margin-top: 0;
   font-size: 30px;
+  color: #e50914
 }
 
 p {
   line-height: 1.6;
+  color: #cccccc;
 }
 
 .acoes {
@@ -58,8 +60,8 @@ p {
 }
 
 .botao {
-  border: 1px solid #222;
-  background: #222;
+  border: 1px solid #e50914;
+  background: #e50914;
   color: white;
   padding: 10px 16px;
   cursor: pointer;
@@ -68,7 +70,7 @@ p {
 
 .botao.secundario {
   background: rgb(255, 255, 255);
-  color: #222;
+  color: #e50914;
 }
 
 form {
@@ -133,6 +135,11 @@ th {
   color: #666;
 }
 
+.contador {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #666;
+}
 .contador {
   margin-top: 10px;
   font-size: 14px;
