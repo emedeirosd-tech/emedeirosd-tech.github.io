@@ -23,7 +23,7 @@ function mostrarInicio() {
   app.innerHTML = `
     <h1>Sistema de Cadastro de Filmes</h1>
     <p>
-      Este é um exemplo simples de SPA feita com HTML, CSS e JavaScript.
+      Este é meu Catálogo de Filmes feito com HTML, CSS e JavaScript.
       A navegação acontece sem recarregar a página.
     </p>
 
